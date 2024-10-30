@@ -1,112 +1,195 @@
+// Definindo status do jogador
+let player = {
+    health: 100,
+    hasPotion: false,
+    isImmune: false
+};
+
 const scenes = [
     { 
         id: 1, 
-        text: "Você está em uma vila deserta devastada pela peste negra. O cheiro da morte está no ar. À distância, vê uma figura encapuzada e ouve gritos vindos de uma cabana.",
+        text: "Você está em uma vila devastada pela peste negra. À sua frente, uma figura encapuzada faz uma oferenda estranha ao lado de uma catapulta carregada com corpos infectados.",
         choices: [
-            { text: "Se aproximar da figura", nextId: 2 },
-            { text: "Investigar a cabana", nextId: 3 },
-            { text: "Fugir da vila", nextId: 4 }
+            { text: "Investigar a figura", nextId: 2 },
+            { text: "Fugir do local", nextId: 3 }
         ]
     },
     { 
         id: 2, 
-        text: "A figura encapuzada revela-se um curandeiro. Ele lhe oferece uma poção para proteção, mas avisa que possui efeitos colaterais desconhecidos.",
+        text: "A figura revela-se um curandeiro, que oferece uma poção que pode fortalecer sua imunidade.",
         choices: [
-            { text: "Aceitar a poção", nextId: 5 },
-            { text: "Recusar a oferta e seguir adiante", nextId: 6 }
+            { text: "Aceitar a poção", nextId: 4 },
+            { text: "Recusar e seguir caminho", nextId: 5 }
         ]
     },
     { 
         id: 3, 
-        text: "Ao entrar na cabana, você encontra uma família doente. Eles pedem ajuda, mas você percebe que também pode se infectar.",
+        text: "Você foge do local, mas ouve o som de uma catapulta sendo acionada, jogando corpos infectados na vila próxima.",
         choices: [
-            { text: "Ajudar a família", nextId: 7 },
-            { text: "Sair rapidamente da cabana", nextId: 8 }
+            { text: "Investigar a vila próxima", nextId: 6 },
+            { text: "Ignorar e fugir", nextId: 7 }
         ]
     },
     { 
         id: 4, 
-        text: "Você tenta fugir da vila, mas é interceptado por guardas que não permitem que ninguém saia para evitar a propagação da peste.",
+        text: "Você bebe a poção. Sua imunidade aumenta, mas o efeito é temporário.",
+        effect: () => { player.isImmune = true; },
         choices: [
-            { text: "Tentar convencer os guardas", nextId: 9 },
-            { text: "Buscar outra rota de fuga", nextId: 10 }
+            { text: "Seguir em frente", nextId: 5 }
         ]
     },
     { 
         id: 5, 
-        text: "Você bebe a poção e sente uma fraqueza momentânea. Contudo, parece que está imune à peste... por enquanto.",
+        text: "Você se depara com um grupo de guardas que discutem sobre atacar uma cidade próxima para evitar o avanço da peste.",
         choices: [
-            { text: "Seguir adiante pela vila", nextId: 6 }
+            { text: "Conversar com os guardas", nextId: 8 },
+            { text: "Continuar sozinho", nextId: 9 }
         ]
     },
     { 
         id: 6, 
-        text: "Ao caminhar mais fundo na vila, encontra um grupo de sobreviventes escondidos em um porão, planejando escapar.",
+        text: "Na vila, os sobreviventes estão em pânico. Um grupo armado desafia você.",
         choices: [
-            { text: "Juntar-se ao grupo", nextId: 11 },
-            { text: "Continuar sozinho", nextId: 12 }
+            { text: "Lutar", nextId: 10 },
+            { text: "Tentar acalmá-los", nextId: 11 }
         ]
     },
     { 
         id: 7, 
-        text: "Ao ajudar a família, você contrai a peste e começa a sentir os sintomas. Sua jornada termina ali.",
-        choices: []
+        text: "Você escapa com sucesso, mas sente que alguém está seguindo você.",
+        choices: [
+            { text: "Esconder-se", nextId: 12 },
+            { text: "Preparar-se para lutar", nextId: 13 }
+        ]
     },
     { 
         id: 8, 
-        text: "Você sai rapidamente da cabana, evitando o contágio, e decide seguir adiante.",
+        text: "Os guardas decidem deixá-lo passar, avisando sobre os perigos à frente.",
         choices: [
-            { text: "Explorar outras áreas da vila", nextId: 6 }
+            { text: "Seguir em frente", nextId: 14 }
         ]
     },
     { 
         id: 9, 
-        text: "Os guardas recusam sua súplica e ordenam que você retorne à vila.",
+        text: "Sozinho, você avista um grupo de bandidos na estrada.",
         choices: [
-            { text: "Obedecer aos guardas", nextId: 6 }
+            { text: "Esconder-se", nextId: 12 },
+            { text: "Enfrentar os bandidos", nextId: 15 }
         ]
     },
     { 
         id: 10, 
-        text: "Você encontra uma passagem secreta fora da vila, mas precisa decidir se deseja explorar mais ou fugir imediatamente.",
+        text: "Luta! Você sofre alguns ferimentos, mas derrota o grupo.",
+        effect: () => { player.health -= 20; },
         choices: [
-            { text: "Explorar mais", nextId: 6 },
-            { text: "Escapar", nextId: 13 }
+            { text: "Explorar a vila", nextId: 14 }
         ]
     },
     { 
         id: 11, 
-        text: "Você se junta ao grupo de sobreviventes, e juntos vocês encontram uma saída segura, sobrevivendo à peste.",
-        choices: []
+        text: "Você acalma os sobreviventes e é recebido no grupo. Eles lhe oferecem ajuda.",
+        choices: [
+            { text: "Aceitar ajuda", nextId: 16 },
+            { text: "Recusar e seguir sozinho", nextId: 14 }
+        ]
     },
     { 
         id: 12, 
-        text: "Sozinho, você vagueia pela vila e acaba encontrando um local seguro para se esconder até que a peste passe.",
-        choices: []
+        text: "Você se esconde com sucesso, evitando o confronto.",
+        choices: [
+            { text: "Seguir em frente", nextId: 14 }
+        ]
     },
     { 
         id: 13, 
-        text: "Você finalmente escapa da vila, sobrevivendo à peste e deixando o horror para trás.",
+        text: "Você se prepara para lutar e derrota o oponente com sucesso.",
+        choices: [
+            { text: "Seguir em frente", nextId: 14 }
+        ]
+    },
+    { 
+        id: 14, 
+        text: "Você chega a uma cidade devastada. Os cadáveres são jogados por catapultas para impedir que sobreviventes entrem.",
+        choices: [
+            { text: "Fugir rapidamente", nextId: 17 },
+            { text: "Buscar abrigo", nextId: 18 }
+        ]
+    },
+    { 
+        id: 15, 
+        text: "Você enfrenta os bandidos, mas sofre danos graves.",
+        effect: () => { player.health -= 30; },
+        choices: [
+            { text: "Buscar ajuda", nextId: 16 }
+        ]
+    },
+    { 
+        id: 16, 
+        text: "Um curandeiro ajuda a recuperar um pouco de sua saúde.",
+        effect: () => { player.health += 20; },
+        choices: [
+            { text: "Continuar sua jornada", nextId: 19 }
+        ]
+    },
+    { 
+        id: 17, 
+        text: "Você foge da cidade e encontra um grupo de sobreviventes que planejam uma fuga.",
+        choices: [
+            { text: "Juntar-se a eles", nextId: 20 },
+            { text: "Seguir sozinho", nextId: 18 }
+        ]
+    },
+    { 
+        id: 18, 
+        text: "Você encontra abrigo e sobrevive à noite, mas a peste continua a se espalhar.",
+        choices: []
+    },
+    { 
+        id: 19, 
+        text: "Você se une ao grupo, e juntos conseguem encontrar uma saída segura.",
+        choices: []
+    },
+    { 
+        id: 20, 
+        text: "Você sobrevive ao lado do grupo, evitando o contágio e escapando da região infectada.",
         choices: []
     }
 ];
 
 function startGame() {
+    player.health = 100; // Reinicializa a saúde
+    player.isImmune = false; // Reinicializa a imunidade
+    document.getElementById('restart-button').style.display = 'none'; // Esconde o botão de reinício
     showScene(1);
 }
 
 function showScene(id) {
     const scene = scenes.find(s => s.id === id);
     document.getElementById('story').textContent = scene.text;
+    
+    if (scene.effect) scene.effect();
+
     const choicesDiv = document.getElementById('choices');
     choicesDiv.innerHTML = '';
 
-    scene.choices.forEach(choice => {
-        const button = document.createElement('button');
-        button.textContent = choice.text;
-        button.onclick = () => showScene(choice.nextId);
-        choicesDiv.appendChild(button);
-    });
+    if (scene.choices.length > 0) {
+        scene.choices.forEach(choice => {
+            const button = document.createElement('button');
+            button.textContent = choice.text;
+            button.onclick = () => showScene(choice.nextId);
+            choicesDiv.appendChild(button);
+        });
+    } else {
+        document.getElementById('restart-button').style.display = 'block';
+    }
+
+    updateStatus();
 }
+
+function updateStatus() {
+    document.getElementById('status').innerHTML = `Saúde: ${player.health}`;
+}
+
+document.getElementById('restart-button').onclick = startGame;
 
 startGame();

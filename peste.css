@@ -43,3 +43,23 @@ button {
 button:hover {
     background-color: #8e5b16;
 }
+
+#restart-button {
+    display: none; /* Esconde o botão até o final do jogo */
+    background-color: #7a4e12;
+    color: #f4e7c3;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    margin: 10px 0;
+    cursor: pointer;
+}
+
+#restart-button:hover {
+    background-color: #8e5b16;
+}
+
+#status {
+    margin-top: 15px;
+    font-size: 16px;
+}
